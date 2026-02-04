@@ -1,5 +1,12 @@
 package tree;
 
+import com.sun.source.tree.Tree;
+
+import javax.sound.midi.MidiFileFormat;
+import javax.swing.*;
+import java.io.FileNotFoundException;
+import java.time.temporal.Temporal;
+import java.util.Map;
 import java.util.Scanner;
 
 class TreeNode<T extends Comparable<T>> {
@@ -144,69 +151,127 @@ class BinaryTree<T extends Comparable<T>> {
         if (node == null) return 0;
         if (node.data.equals(key)) return level;
 
-        int tempLevel = findLevel(node.left, key, level+1);
+        int tempLevel = findLevel(node.left, key, level + 1);
         if (tempLevel != 0) return tempLevel;
-        return findLevel(node.right, key, level+1);
+        return findLevel(node.right, key, level + 1);
     }
-    public int findLevel(T key){
+
+    public int findLevel(T key) {
         return findLevel(root, key, 1);
     }
 
-    public int sum(TreeNode<Integer> node){
+    public int sum(TreeNode<Integer> node) {
         if (node == null) return 0;
         return (node.data + sum(node.left) + sum(node.right));
     }
 
 }
+
 public class Main {
-    public static int sumSmallerInLeftSubtree(TreeNode<Integer> node){
+    // primer 5
+    public static int sumSmallerInLeftSubtree(TreeNode<Integer> node) {
         if (node == null || node.left == null) return 0;
         return summingFunction(node.left, node.data, true);
     }
-    public static int sumGreaterInRightSubtree(TreeNode<Integer> node){
+
+    public static int sumGreaterInRightSubtree(TreeNode<Integer> node) {
         return summingFunction(node.right, node.data, false);
     }
 
-    private static int summingFunction(TreeNode<Integer> node, int threshold, boolean isSmaller){
+    private static int summingFunction(TreeNode<Integer> node, int threshold, boolean isSmaller) {
         if (node == null) return 0;
 
         int currentVal = 0;
-        if (isSmaller){
+        if (isSmaller) {
             if (node.data < threshold) currentVal = node.data;
-        }else{
+        } else {
             if (node.data > threshold) currentVal = node.data;
         }
         return currentVal + summingFunction(node.left, threshold, isSmaller) + summingFunction(node.right, threshold, isSmaller);
     }
-   public static void main(String[] args) {
+
+    // primer  6
+    public static int distanceBetweenNodes(TreeNode<Integer> root, int first, int second) {
+        if (root == null) return -1;
+        TreeNode<Integer> lca = findLCA(root, first, second);
+        if (lca == null) return -1;
+        int distance1 = getLevel(lca, first, 0);
+        int distance2 = getLevel(lca, second, 0);
+
+        return distance1 + distance2;
+    }
+
+    public static int getLevel(TreeNode<Integer> node, int value, int level) {
+        if (node == null) return -1;
+        if (node.data == value) return level;
+
+        int left = getLevel(node.left, value, level + 1);
+        if (left != -1) return left;
+
+        return getLevel(node.right, value, level + 1);
+    }
+
+    public static TreeNode<Integer> findLCA(TreeNode<Integer> node, int first, int second) {
+        if (node == null) return null;
+        if (node.data == first || node.data == second) return node;
+
+        TreeNode<Integer> leftLca = findLCA(node.left, first, second);
+        TreeNode<Integer> rightLca = findLCA(node.right, first, second);
+
+        if (leftLca != null && rightLca != null) return node;
+        return (leftLca != null) ? leftLca : rightLca;
+    }
+    // zad1
+    public static int sumNodesWithOnlyLeftChild(TreeNode<Integer> node){
+        if (node == null) return 0;
+
+        int currentVal = 0;
+        if (node.left != null && node.right == null)  currentVal += node.data;
+
+        return currentVal + sumNodesWithOnlyLeftChild(node.left) + sumNodesWithOnlyLeftChild(node.right);
+    }
+    // zad2
+    public static int checkSumTree(TreeNode<Integer> node){
+        if (node == null) return 0;
+
+        if (node.left == null && node.right == null) return node.data;
+
+        int leftSum = checkSumTree(node.left);
+        int rightSum = checkSumTree(node.right);
+
+        if (leftSum == -1 || rightSum == -1) return -1;
+
+        if (node.data == leftSum + rightSum){
+            return node.data + leftSum + rightSum;
+        }else{
+            return -1;
+        }
+    }
+    public static boolean isSumTree(TreeNode<Integer> node){
+        return checkSumTree(node) != -1;
+    }
+    public static void main(String[] args) {
         TreeNode<Integer> temp1, temp2, temp3;
 
         BinaryTree<Integer> tree = new BinaryTree<>();
 
 
-        tree.makeRoot(1);
+        tree.makeRoot(26);
 
-        temp1 = tree.addLeftChild(7, tree.root);
+        temp1 = tree.addLeftChild(10, tree.root);
 
-        temp2 = tree.addLeftChild(2, temp1);
+        temp2 = tree.addLeftChild(4, temp1);
 
         temp3 = tree.addRightChild(6, temp1);
 
-        temp1 = tree.addLeftChild(5, temp3);
+        temp1 = tree.addRightChild(3, tree.root);
 
-        temp2 = tree.addRightChild(11, temp3);
+        temp2 = tree.addRightChild(3, temp1);
 
-        temp1 = tree.addRightChild(9, tree.root);
-
-        temp2 = tree.addRightChild(19, temp1);
-
-        temp1 = tree.addLeftChild(15, temp2);
 
         Scanner scanner = new Scanner(System.in);
-        int value = scanner.nextInt();
-        TreeNode<Integer> node = tree.findNode(tree.root, value);
-        System.out.println("smaller elements on the left subtree " + sumSmallerInLeftSubtree(node));
-        System.out.println("greater elements on the right subtree " + sumGreaterInRightSubtree(node));
+        System.out.println(tree.toString());
+        System.out.println(isSumTree(tree.root));
     }
 }
 
