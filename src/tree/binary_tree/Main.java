@@ -1,12 +1,5 @@
-package tree;
+package tree.binary_tree;
 
-import com.sun.source.tree.Tree;
-
-import javax.sound.midi.MidiFileFormat;
-import javax.swing.*;
-import java.io.FileNotFoundException;
-import java.time.temporal.Temporal;
-import java.util.Map;
 import java.util.Scanner;
 
 class TreeNode<T extends Comparable<T>> {
@@ -221,17 +214,19 @@ public class Main {
         if (leftLca != null && rightLca != null) return node;
         return (leftLca != null) ? leftLca : rightLca;
     }
+
     // zad1
-    public static int sumNodesWithOnlyLeftChild(TreeNode<Integer> node){
+    public static int sumNodesWithOnlyLeftChild(TreeNode<Integer> node) {
         if (node == null) return 0;
 
         int currentVal = 0;
-        if (node.left != null && node.right == null)  currentVal += node.data;
+        if (node.left != null && node.right == null) currentVal += node.data;
 
         return currentVal + sumNodesWithOnlyLeftChild(node.left) + sumNodesWithOnlyLeftChild(node.right);
     }
+
     // zad2
-    public static int checkSumTree(TreeNode<Integer> node){
+    public static int checkSumTree(TreeNode<Integer> node) {
         if (node == null) return 0;
 
         if (node.left == null && node.right == null) return node.data;
@@ -241,37 +236,58 @@ public class Main {
 
         if (leftSum == -1 || rightSum == -1) return -1;
 
-        if (node.data == leftSum + rightSum){
+        if (node.data == leftSum + rightSum) {
             return node.data + leftSum + rightSum;
-        }else{
+        } else {
             return -1;
         }
     }
-    public static boolean isSumTree(TreeNode<Integer> node){
+
+    public static boolean isSumTree(TreeNode<Integer> node) {
         return checkSumTree(node) != -1;
     }
+
+    // zad3
+    public static int sumOfPaths(TreeNode<Integer> node, int sum) {
+        if (node == null) return 0;
+
+        sum = (sum * 10) + node.data;
+
+        if (node.left == null && node.right == null)
+            return sum;
+
+        return sumOfPaths(node.left, sum) + sumOfPaths(node.right, sum);
+    }
+
+
     public static void main(String[] args) {
         TreeNode<Integer> temp1, temp2, temp3;
 
         BinaryTree<Integer> tree = new BinaryTree<>();
 
 
-        tree.makeRoot(26);
+        tree.makeRoot(3);
 
-        temp1 = tree.addLeftChild(10, tree.root);
+        temp1 = tree.addLeftChild(5, tree.root);
 
-        temp2 = tree.addLeftChild(4, temp1);
+        temp2 = tree.addLeftChild(1, temp1);
 
-        temp3 = tree.addRightChild(6, temp1);
+        temp3 = tree.addRightChild(3, temp1);
 
-        temp1 = tree.addRightChild(3, tree.root);
+        temp2 = tree.addLeftChild(2, temp3);
 
-        temp2 = tree.addRightChild(3, temp1);
+        temp2 = tree.addRightChild(9, temp3);
+
+        temp1 = tree.addRightChild(1, tree.root);
+
+        temp2 = tree.addRightChild(1, temp1);
+
+        temp3 = tree.addLeftChild(6, temp2);
 
 
         Scanner scanner = new Scanner(System.in);
         System.out.println(tree.toString());
-        System.out.println(isSumTree(tree.root));
+        System.out.println(sumOfPaths(tree.root, 0));
     }
 }
 
