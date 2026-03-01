@@ -368,13 +368,32 @@ class BinarySearchTree<E extends Comparable<E>> {
         if (node == null) return null;
 
         if (v1.compareTo(node.info) < 0 && v2.compareTo(node.info) < 0) {
-            LCA(node.left, v1, v2);
+            return LCA(node.left, v1, v2);
         }
         if (v1.compareTo(node.info) > 0 && v2.compareTo(node.info) > 0) {
-            LCA(node.right, v1, v2);
+            return LCA(node.right, v1, v2);
         }
         return node;
     }
+
+    // zad3
+    public void deleteLeafs() {
+        root = deleteLeafs(root);
+    }
+
+    private BNode<E> deleteLeafs(BNode<E> node) {
+        if (node == null) return null;
+
+        if (node.left == null && node.right == null) return null;
+
+        node.left = deleteLeafs(node.left);
+        node.right = deleteLeafs(node.right);
+
+        return node;
+    }
+
+
+
 }
 
 public class Main {
@@ -408,11 +427,12 @@ public class Main {
         tree.insert(6);
         tree.insert(13);
 
+//
+//        System.out.println(tree.successor(3));
+//        System.out.println(tree.predecessor(3));
+//        System.out.println("smallest k " + tree.sumOfSmallestK(5));
+//        System.out.println("lca " + tree.LCA(6, 11));
+        tree.deleteLeafs();
         tree.printTree();
-
-        System.out.println(tree.successor(3));
-        System.out.println(tree.predecessor(3));
-        System.out.println("smallest k " + tree.sumOfSmallestK(5));
-        System.out.println("lca " + tree.LCA(6, 11));
     }
 }

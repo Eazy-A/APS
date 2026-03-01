@@ -1,5 +1,6 @@
 package tree.avl_tree;
 
+
 class AVLNode<E extends Comparable<E>> {
 
     public E info;
@@ -384,9 +385,9 @@ public class AVLTree<E extends Comparable<E>> {
         }
     }
 
+
     // Test program
     public static void main(String[] args) {
-
 
     }
 }
