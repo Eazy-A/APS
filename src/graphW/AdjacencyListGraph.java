@@ -186,6 +186,45 @@ public class AdjacencyListGraph<T> {
         return ret;
     }
 
+    public int prim() {
+        Map<T, Integer> distances = new HashMap<>();
+        PriorityQueue<T> queue = new PriorityQueue<>(Comparator.comparingInt(distances::get));
+        Set<T> explored = new HashSet<>();
+
+        // Initialize distances
+        for (T vertex : adjacencyList.keySet()) {
+            distances.put(vertex, Integer.MAX_VALUE);
+        }
+        var startVertex = adjacencyList.keySet().iterator().next();
+        distances.put(startVertex, 0);
+
+        queue.add(startVertex);
+        int totalCost = 0;
+        while (!queue.isEmpty()) {
+            T current = queue.poll();
+            if (explored.contains(current)) continue;
+            explored.add(current);
+            totalCost += distances.get(current);
+
+            for (Map.Entry<T, Integer> neighborEntry : adjacencyList.get(current).entrySet()) {
+                T neighbor = neighborEntry.getKey();
+                int newDist = neighborEntry.getValue();
+
+                if (newDist < distances.get(neighbor)) {
+                    distances.put(neighbor, newDist);
+
+                    // Update priority queue
+                    if (!explored.contains(neighbor)) {
+                        queue.add(neighbor);
+                    }
+                }
+            }
+        }
+
+        return totalCost;
+    }
+
+
 
 
 }
